@@ -296,29 +296,25 @@ class CandidateList extends Component {
     this.candidatesFormComponentRef = React.createRef();
   }
 
-  notSameIdentityDocument = (values) => {
-    console.log('values :', values);
+  notSameIdentityDocument = (newCandidates) => {
     let err = false;
     let identityDocumentsUsed = [];
-    const lists = this.state.lists;
-    console.log('lists :', lists);
-    for (let i = 0; i < lists.length; i++) {
-      const list = lists[i];
-      console.log('list :', list);
-      for (const key in list) {
-        if (list.hasOwnProperty(key)) {
-          console.log('key :', key);
-          if (key.split('-')[0] === 'identityDocument') {
-            for (const key2 in values) {
-              if (values.hasOwnProperty(key2)) {
-                console.log('key2 :', key2);
-                if (key2.split('-')[0] === 'identityDocument') {
-                  console.log(list[key], '===', values[key2]);
-                  if (list[key] === values[key2]) {
-                    err = true;
-                    identityDocumentsUsed.push(values[key2]);
-                    continue;
-                  }
+    const lists = [...this.state.lists];
+    if (this.state.editList) {
+      const index = lists.findIndex(list => list.key === this.state.editList.key);
+      lists.splice(index, 1);
+    }
+    for (const list of lists) {
+      const candidates = list.candidates;
+      for (const candidate of candidates) {
+        for (const key in candidate) {
+          if (key === 'identityDocument') {
+            for (const key2 in newCandidates) {
+              if (key2.split('-')[0] === 'identityDocument') {
+                if (candidate[key] === newCandidates[key2]) {
+                  err = true;
+                  identityDocumentsUsed.push(newCandidates[key2]);
+                  continue;
                 }
               }
             }
@@ -394,7 +390,7 @@ class CandidateList extends Component {
       const notSameIdentityDocument = this.notSameIdentityDocument(values);
       if (notSameIdentityDocument.err) {
         err = true;
-        message.error(`Las siguientes CI ya fueron agregadas: ${notSameIdentityDocument.identityDocumentsUsed}`);
+        message.error(`Las siguientes CI ya fueron agregadas en otras planchas: ${notSameIdentityDocument.identityDocumentsUsed}`);
       }
       else if (!err) {
         const lists = this.state.lists;
@@ -468,7 +464,7 @@ class CandidateList extends Component {
                   <Icon style={{ marginLeft: '10px' }} type="delete" />
                 </Popconfirm>
               </h1>
-              <ul>{list.candidates.map(candidate => <li>{candidate.name} - {candidate.identityDocument} - {candidate.position} </li>)}</ul>
+              <ul>{list.candidates.map((candidate, index) => <li key={index}>{candidate.name} - {candidate.identityDocument} - {candidate.position} </li>)}</ul>
             </List.Item>
           )} />
         <Modal
