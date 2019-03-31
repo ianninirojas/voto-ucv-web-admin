@@ -1,0 +1,11 @@
+.ant-layout-header {
+  background: #f0f2f5 !important;
+}
+
+.ant-layout-header .ant-menu {
+  line-height: 62px !important;
+}
+
+.ant-page-header {
+  padding: 30px 32px !important;
+}

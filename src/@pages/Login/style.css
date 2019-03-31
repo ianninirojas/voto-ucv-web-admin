@@ -1,0 +1,51 @@
+.tint {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.tint:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* background: rgba(8, 8, 119, 0.76); */
+  background: rgba(0, 21, 41, 0.92);
+  -moz-transition: all .3s linear;
+  -webkit-transition: all .3s linear;
+  -ms-transition: all .3s linear;
+  -o-transition: all .3s linear;
+  transition: all .3s linear;
+}
+
+.logo-login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 55%;
+  height: 60%
+}
+
+.login-box {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form {
+  width: 70%;
+  border-radius: 5% !important;
+  background-color: #f9f9f9 !important;
+  -webkit-box-shadow: 10px 10px 81px -20px rgba(0, 0, 0, 1);
+  -moz-box-shadow: 10px 10px 81px -20px rgba(0, 0, 0, 1);
+  box-shadow: 10px 10px 81px -20px rgba(0, 0, 0, 1);
+}
+
+.ant-card-head {
+  border-bottom: 0px !important;
+}
