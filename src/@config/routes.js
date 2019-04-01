@@ -69,11 +69,11 @@ const routes = [
     roles: [Role.Admin],
     exact: true
   },
-  // {
-  //   path: pathRoutes.ELECTIONSEDIT,
-  //   component: ElectionEdit,
-  //   roles: [Role.Admin]
-  // },
+  {
+    path: pathRoutes.ELECTIONSEDIT,
+    component: ElectionEdit,
+    roles: [Role.Admin]
+  },
   {
     path: pathRoutes.FACULTIES,
     component: Faculties,

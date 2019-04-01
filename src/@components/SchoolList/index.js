@@ -80,11 +80,12 @@ class SchoolList extends Component {
   render() {
     return (
       <div>
-        <Form.Item className='float-left' >
+        <Form.Item className='float-left' style={{ marginBottom: '0px' }}>
           <h1 >Facultad de {this.state.faculty.name}</h1>
         </Form.Item>
 
-        <Form.Item  >
+        <Form.Item
+          style={{ marginBottom: '0px' }}>
           <Button
             type='primary'
             onClick={this.createSchools}

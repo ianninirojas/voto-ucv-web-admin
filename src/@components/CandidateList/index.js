@@ -291,9 +291,14 @@ class CandidateList extends Component {
     super(props);
     this.state = {
       lists: [],
-      count: 0
+      count: 0,
+      bErrorMessage: false
     }
     this.candidatesFormComponentRef = React.createRef();
+  }
+
+  componentWillReceiveProps(props) {
+    this.hasError(props.bHasError);
   }
 
   notSameIdentityDocument = (newCandidates) => {
@@ -368,6 +373,7 @@ class CandidateList extends Component {
           count: this.state.count + 1,
           visible: false
         });
+        this.props.setCandidates(lists);
         message.success(`Se creó la plancha "${values.listName}"`);
       }
     });
@@ -397,7 +403,6 @@ class CandidateList extends Component {
         const editList = this.state.editList;
         const listCandidates = this.state.list;
         for (const list of lists) {
-          console.log(list.key, '', editList.key);
           if (list.key === editList.key) {
             list.candidates = listCandidates;
           }
@@ -419,7 +424,7 @@ class CandidateList extends Component {
     lists.splice(index, 1);
     if (lists.length !== 0) {
       this.setState({ lists })
-      // this.props.setCandidate(newDataSource);
+      this.props.setCandidates(lists);
     }
     else {
       message.error('Debe haber al menos una plancha');
@@ -438,6 +443,17 @@ class CandidateList extends Component {
     });
   }
 
+  hasError = (hasError) => {
+    const error = document.getElementById("add-new-list-error");
+    if (hasError) {
+      error.classList.add('has-error');
+    }
+    else {
+      error.classList.remove('has-error');
+    }
+    this.setState({ bErrorMessage: hasError });
+  }
+
   render = () => {
     return (
       <div>
@@ -446,10 +462,16 @@ class CandidateList extends Component {
         <Button
             onClick={this.showModal}
             type="primary"
+            size='small'
             style={{ marginLeft: 10 }}
           >
             AGREGAR LISTA
         </Button>
+          <div id="add-new-list-error" className="ant-form-item-control">
+            {this.state.bErrorMessage && (
+              <div className="ant-form-explain">Por favor agrega al menos una lista</div>
+            )}
+          </div>
         </h1>
         <List
           dataSource={this.state.lists}

@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 
 import {
   Table,
+  Icon,
   Button,
   Form
 } from 'antd';
+
+import { Link } from "react-router-dom";
 
 import { pathRoutes } from "../../@constans";
 import { electionService } from '../../@services';
@@ -23,24 +26,6 @@ const columns = [
     align: 'center',
   },
   {
-    title: 'Nivel Elección',
-    dataIndex: 'levelElection',
-    key: 'levelElection',
-    align: 'center',
-  },
-  {
-    title: 'Tipo Candidato',
-    dataIndex: 'typeCandidate',
-    key: 'typeCandidate',
-    align: 'center',
-  },
-  {
-    title: 'Tipo Elector',
-    dataIndex: 'typeElector',
-    key: 'typeElector',
-    align: 'center',
-  },
-  {
     title: 'Facultad',
     dataIndex: 'facultyId',
     key: 'facultyId',
@@ -53,22 +38,16 @@ const columns = [
     align: 'center',
   },
   {
-    title: 'Votos Permitidos',
-    dataIndex: 'allowedVotes',
-    key: 'allowedVotes',
+    title: 'Ver',
+    key: 'see',
     align: 'center',
-  },
-  {
-    title: 'Periodo',
-    dataIndex: 'period',
-    key: 'period',
-    align: 'center',
-  },
-  {
-    title: 'Candidatos',
-    dataIndex: 'candidates',
-    key: 'candidates',
-    align: 'center',
+    render: (text, election) => (
+      <span>
+        <Link to={{ pathname: pathRoutes.ELECTIONSEDIT.replace(':electoralEventPublickey', election.electoralEvent.publickey).replace(':id', election.id), state: { election } }}>
+          <Icon type="eye" />
+        </Link>
+      </span>
+    ),
   },
 ];
 
@@ -88,7 +67,7 @@ class ElectionList extends Component {
 
   getElections = () => {
     this.setState({ loading: true });
-    electionService.getAll(this.state.electoralEvent.id)
+    electionService.getAll(this.state.electoralEvent.publickey)
       .then(response => {
         let elections = [];
         for (const election of response) {
@@ -113,11 +92,11 @@ class ElectionList extends Component {
   render() {
     return (
       <div>
-        <Form.Item className='float-left' >
-          <h1 >Evento Electoral {this.state.electoralEvent.name}</h1>
+        <Form.Item className='float-left' style={{ marginBottom: '0px' }}>
+          <h1 >Evento Electoral: <span style={{ fontWeight: 400 }} >{this.state.electoralEvent.name}</span></h1>
         </Form.Item>
 
-        <Form.Item  >
+        <Form.Item style={{ marginBottom: '0px' }}>
           <Button
             type='primary'
             onClick={this.createElections}

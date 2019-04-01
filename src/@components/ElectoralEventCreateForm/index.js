@@ -6,12 +6,14 @@ import {
   Input,
   Button,
   message,
+  Popconfirm,
   DatePicker,
 } from "antd";
 
 import locale from 'antd/lib/date-picker/locale/es_ES';
 
 import moment from 'moment';
+
 import 'moment/locale/es';
 
 import { electoralEventService } from '../../@services';
@@ -90,9 +92,7 @@ class ElectoralEventCreate extends Component {
     const { getFieldDecorator } = this.props.form;
     return (
       <div>
-        <Form
-          onSubmit={this.handleSubmit}
-        >
+        <Form>
           {/* NAME */}
           <Form.Item
             label={(
@@ -139,13 +139,14 @@ class ElectoralEventCreate extends Component {
           {/* API ERROR */}
 
           < Form.Item className='float-right' >
-            <Button
-              type='primary'
-              loading={this.state.loading}
-              htmlType='submit'
-            >
-              CREAR
+            <Popconfirm title="Esta información no puede ser modificada" onConfirm={this.handleSubmit}>
+              <Button
+                type='primary'
+                loading={this.state.loading}
+              >
+                CREAR
             </Button>
+            </Popconfirm>
           </Form.Item>
 
         </Form>

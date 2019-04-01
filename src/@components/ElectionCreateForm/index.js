@@ -7,18 +7,30 @@ import {
   Button,
   Select,
   message,
+  Popconfirm,
   DatePicker,
 } from "antd";
 
 import locale from 'antd/lib/date-picker/locale/es_ES';
 
-// import moment from 'moment';
+import moment from 'moment';
 
 import 'moment/locale/es';
 
-import { electionService, typeElectionService, facultyService, schoolService } from '../../@services';
+import {
+  schoolService,
+  facultyService,
+  electionService,
+  typeElectionService,
+} from '../../@services';
 
-import { pathRoutes, LevelElection, TypeElector, TypeCandidate } from '../../@constans';
+import {
+  pathRoutes,
+  TypeElector,
+  TypeCandidate,
+  LevelElection,
+} from '../../@constans';
+
 import { CandidateForm } from '../CandidateForm';
 
 const { RangePicker } = DatePicker;
@@ -38,6 +50,7 @@ class ElectionCreate extends Component {
       candidates: [],
       bHasErrorCandidates: false
     }
+    this.CandidatesFormComponentRef = React.createRef();
   }
 
   componentDidMount = () => {
@@ -98,14 +111,18 @@ class ElectionCreate extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      if (this.state.candidates.length === 0) {
+      if (this.CandidatesFormComponentRef.current.getCandidates().length === 0) {
         this.setState({ bHasErrorCandidates: true })
       }
       else if (!err) {
         this.setState({ loading: true });
-        values = { ...values, candidates: this.state.candidates }
-        console.log('values :', values);
-        electionService.create(values)
+        const candidates = [...this.CandidatesFormComponentRef.current.getCandidates()];
+        values = { ...values, candidates }
+        const dateFormat = "DD/MM/YYYY";
+        let startDatePeriod = moment(values.date[0], dateFormat).format(dateFormat);
+        let endDatePeriod = moment(values.date[1], dateFormat).format(dateFormat);
+        values['period'] = `${startDatePeriod} - ${endDatePeriod}`;
+        electionService.create(this.state.electoralEvent.publickey, values)
           .then(response => {
             message.success('Elección creada');
             this.props.history.push(pathRoutes.ELECTORALEVENTS)
@@ -184,11 +201,11 @@ class ElectionCreate extends Component {
   }
 
   facultyOptions = () => {
-    return (this.state.faculties.map(faculty => <Select.Option key={faculty.id}>{faculty.name}</Select.Option>));
+    return (this.state.faculties.map(faculty => <Select.Option key={faculty.code}>{faculty.name}</Select.Option>));
   }
 
   schoolOptions = () => {
-    return (this.state.schools.map(school => <Select.Option key={school.id}>{school.name}</Select.Option>));
+    return (this.state.schools.map(school => <Select.Option key={school.code}>{school.name}</Select.Option>));
   }
 
   // SELECT OPTIONS
@@ -204,12 +221,9 @@ class ElectionCreate extends Component {
   }
   // HANDLE CHANGE
 
-  setCandidate = (candidates) => {
-    this.setState({
-      candidates: candidates,
-      bHasErrorCandidates: false
-    })
-  };
+  setCandidates = () => {
+    this.setState({ bHasErrorCandidates: false })
+  }
 
   // FIELD RULES
   isNumber = (rule, value, callback) => {
@@ -219,6 +233,10 @@ class ElectionCreate extends Component {
     }
     callback('Debe ser un número');
   }
+
+  disabledDate = (current) => {
+    return current < moment().endOf('day').subtract(1, 'day');
+  }
   // FIELD RULES
 
   render() {
@@ -226,10 +244,8 @@ class ElectionCreate extends Component {
     const { getFieldDecorator } = this.props.form;
     return (
       <div>
-        <h1>Evento Electoral - {this.state.electoralEvent.name}</h1>
-        <Form
-          onSubmit={this.handleSubmit}
-        >
+        <h1 >Evento Electoral: <span style={{ fontWeight: 400 }} >{this.state.electoralEvent.name}</span></h1>
+        <Form>
           {/* NAME */}
           <Form.Item
             label={(
@@ -265,21 +281,23 @@ class ElectionCreate extends Component {
           {/* LEVEL ELECTION */}
 
           {/* TYPE */}
-          <Form.Item
-            label={(
-              <span>Tipo Elección</span>
-            )}
-          >
-            {getFieldDecorator('type', {
-              rules: [
-                { required: true, message: 'Requerido' }
-              ],
-            })(
-              <Select placeholder="Tipo Elección" >
-                {this.typesElectionOptions()}
-              </Select>
-            )}
-          </Form.Item>
+          {this.props.form.getFieldValue('levelElection') && (
+            <Form.Item
+              label={(
+                <span>Tipo Elección</span>
+              )}
+            >
+              {getFieldDecorator('type', {
+                rules: [
+                  { required: true, message: 'Requerido' }
+                ],
+              })(
+                <Select placeholder="Tipo Elección" >
+                  {this.typesElectionOptions()}
+                </Select>
+              )}
+            </Form.Item>
+          )}
           {/* TYPE */}
 
           {/* TYPE ELECTOR */}
@@ -373,7 +391,6 @@ class ElectionCreate extends Component {
                 disabledDate={this.disabledDate}
                 format='DD-MM-YYYY'
                 placeholder={['Comienzo', 'Fin']}
-                onOk={this.onOkDate}
               />
             )}
           </Form.Item>
@@ -401,8 +418,9 @@ class ElectionCreate extends Component {
           {this.props.form.getFieldValue('typeCandidate') !== undefined && (
             <CandidateForm
               bHasError={this.state.bHasErrorCandidates}
-              setCandidate={this.setCandidate}
               typeCandidate={this.props.form.getFieldValue('typeCandidate')}
+              setCandidates={this.setCandidates}
+              ref={this.CandidatesFormComponentRef}
               {...this.props}
             />
           )}
@@ -415,13 +433,14 @@ class ElectionCreate extends Component {
           {/* API ERROR */}
 
           < Form.Item className='float-right' >
-            <Button
-              type='primary'
-              loading={this.state.loading}
-              htmlType='submit'
-            >
-              CREAR
+            <Popconfirm title="Esta información no puede ser modificada" onConfirm={this.handleSubmit}>
+              <Button
+                type='primary'
+                loading={this.state.loading}
+              >
+                CREAR
             </Button>
+            </Popconfirm>
           </Form.Item>
 
         </Form>

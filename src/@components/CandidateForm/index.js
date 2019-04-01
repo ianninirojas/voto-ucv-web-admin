@@ -14,6 +14,7 @@ class CandidateForm extends Component {
 
     this.state = {
       positions: [],
+      candidates: []
     }
   }
 
@@ -37,13 +38,42 @@ class CandidateForm extends Component {
       })
   }
 
+  setCandidates = (candidates) => {
+    this.setState({ candidates });
+    this.props.setCandidates();
+  }
+
+  getCandidates = () => {
+    let { typeCandidate } = this.props
+    let candidates = JSON.parse(JSON.stringify(this.state.candidates));
+    if (typeCandidate === TypeCandidate.uninominal) {
+      for (const candidate of candidates) {
+        delete candidate['key'];
+      }
+      return candidates;
+    }
+    else if (typeCandidate === TypeCandidate.list) {
+      let candidatesList = [];
+      for (const list of candidates) {
+        const listName = list.listName;
+        const candidates = list.candidates;
+        for (const candidate of candidates) {
+          candidate['listName'] = listName;
+          delete candidate['key'];
+          candidatesList.push(candidate);
+        }
+      }
+      return candidatesList;
+    }
+  }
+
   TypeCandidate = () => {
     let { typeCandidate } = this.props
     if (typeCandidate === TypeCandidate.uninominal) {
-      typeCandidate = <CandidateUninominal {...this.props} positions={this.state.positions} />
+      typeCandidate = <CandidateUninominal {...this.props} positions={this.state.positions} setCandidates={this.setCandidates} />
     }
     else if (typeCandidate === TypeCandidate.list) {
-      typeCandidate = <CandidateList positions={this.state.positions} />
+      typeCandidate = <CandidateList {...this.props} positions={this.state.positions} setCandidates={this.setCandidates} />
     }
     return typeCandidate;
   }

@@ -73,7 +73,7 @@ class ElectoralEventList extends Component {
       .then(response => {
         let electoralEvents = [];
         for (const electoralEvent of response) {
-          const publickey = nemAccountService.generatePublicKey(electoralEvent.data.name);
+          const publickey = nemAccountService.generatePublicKey(electoralEvent.data.name.toLowerCase());
           electoralEvent.data['publickey'] = publickey;
           electoralEvent.data['key'] = publickey;
           electoralEvents.push(electoralEvent.data)

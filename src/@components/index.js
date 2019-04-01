@@ -20,7 +20,7 @@ export * from './ElectoralEventList';
 
 // ELECTION
 export * from './ElectionCreateForm';
-// export * from './ElectionEditForm';
+export * from './ElectionEditForm';
 export * from './ElectionList';
 
 // FACULTY
