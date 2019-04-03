@@ -42,7 +42,7 @@ code {
 }
 
 .ant-card-wider-padding .ant-card-body {
-  padding: 60px !important;
+  padding: 40px 100px !important;
 }
 
 /* modify ant design */

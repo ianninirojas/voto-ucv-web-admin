@@ -22,7 +22,7 @@ class Login extends Component {
             xl={11}
             style={{ height: '100%' }}
           >
-            <div class="tint">
+            <div className="tint">
               <img src={textureBackgroudLogin} alt="" width="100%" height="100%" />
               <img className='logo-login' src={logo} alt="" />
             </div>

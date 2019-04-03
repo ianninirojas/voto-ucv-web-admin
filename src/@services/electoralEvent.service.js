@@ -18,12 +18,28 @@ const getAll = () => {
   return fetch(`${env.apiUrl}/electoral-event`, requestOptions).then(handleResponse);
 }
 
-const activate = () => {
-
+const activate = (electoralEventPublickey) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/activate`, requestOptions).then(handleResponse);
 }
 
-const finish = () => {
+const finish = (electoralEventPublickey) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/finish`, requestOptions).then(handleResponse);
+}
 
+const createElectoralRegister = (electoralEventPublickey) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/create-electoral-register`, requestOptions).then(handleResponse);
 }
 
 export const electoralEventService = {
@@ -31,4 +47,5 @@ export const electoralEventService = {
   create,
   activate,
   finish,
+  createElectoralRegister
 }
