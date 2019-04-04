@@ -9,7 +9,7 @@ class Home extends Component {
         title='Home'
         {...this.props}
       >
-        Home
+        <h3>Bienvenido al Sistema administrativo de Voto UCV</h3>
       </WrapperContent>
     );
   }
