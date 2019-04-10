@@ -23,6 +23,10 @@ const login = (username, password) => {
         });
 }
 
+const refreshToken = (token) => {
+    localStorage.setItem('currentUser', token);
+}
+
 const logout = () => {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
@@ -61,6 +65,7 @@ export const authenticationService = {
     getUsername,
     getId,
     updateProfile,
+    refreshToken,
     currentUser: currentUserSubject.asObservable(),
     get currentUserValue() { return currentUserSubject.value }
 };
