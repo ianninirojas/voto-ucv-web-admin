@@ -63,6 +63,11 @@ class SchoolList extends Component {
           school['key'] = school.id
           schools.push(school);
         }
+        schools.sort((a, b) => {
+          if (a.code > b.code) return 1;
+          if (a.code < b.code) return -1;
+          return 0;
+        });
         this.setState({ schools, loading: false });
       })
       .catch(error => {

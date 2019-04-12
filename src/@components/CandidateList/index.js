@@ -136,7 +136,7 @@ class Candidates extends Component {
   notSameIdentityDocument = (rule, value, callback) => {
     const actualField = rule.field.split('-')[1];
     for (let i = 0; i < this.state.count; i++) {
-      if (i != actualField) {
+      if (i !== parseInt(actualField)) {
         if (this.props.form.getFieldValue(`identityDocument-${i}`) === value) {
           callback('Otro candidato tiene mismo CI')
         }
@@ -185,18 +185,17 @@ class Candidates extends Component {
   handleDeleteCandidate = (key) => {
     const candidates = [...this.state.candidates];
     if (candidates.length > 1) {
-      candidates.find((candidate, index) => {
-        if (candidate.key === key) {
-          candidates.splice(index, 1);
-          this.handlePositionChange(candidate);
-          this.setState({
-            candidates,
-            count: this.state.count - 1,
-          });
-          this.props.setList(candidates);
-          return candidate;
-        }
-      });
+
+      const index = candidates.findIndex(candidate => candidate.key === key);
+      if (index) {
+        candidates.splice(index, 1);
+        this.handlePositionChange(candidates[index]);
+        this.setState({
+          candidates,
+          count: this.state.count - 1,
+        });
+        this.props.setList(candidates);
+      }
     }
     else {
       message.error('Debe haber al menos un candidato');

@@ -5,7 +5,7 @@ class SchoolCreate extends Component {
   render() {
     return (
       <WrapperContent
-        title='SCHOOL'
+        title='ESCUELA'
         subTitle='CREATE'
         {...this.props}
       >

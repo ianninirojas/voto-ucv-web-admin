@@ -70,6 +70,11 @@ class FacultyList extends Component {
           faculty['key'] = faculty.id
           faculties.push(faculty);
         }
+        faculties.sort((a, b) => {
+          if (a.code > b.code) return 1;
+          if (a.code < b.code) return -1;
+          return 0;
+        });
         this.setState({ faculties, loading: false });
       })
       .catch(error => {

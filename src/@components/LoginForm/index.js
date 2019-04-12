@@ -11,7 +11,6 @@ import {
 import { authenticationService } from "../../@services";
 
 const FormItem = Form.Item;
-
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -81,7 +80,7 @@ class Login extends Component {
 
         <FormItem>
           <span className='float-left'>
-            <a className="login-form-forgot" href={'#'}>Olvidó contraseña</a>
+            {/* <a className="login-form-forgot" href={'#'}>Olvidó contraseña</a> */}
           </span>
           <span className='float-right'>
             <Button type="primary" htmlType="submit" className="login-form-button" loading={this.state.loading}>

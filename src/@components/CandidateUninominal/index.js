@@ -128,7 +128,7 @@ class CandidateUninominal extends Component {
   notSameIdentityDocument = (rule, value, callback) => {
     const actualField = rule.field.split('-')[1];
     for (let i = 0; i < this.state.count; i++) {
-      if (i != actualField) {
+      if (i !== parseInt(actualField)) {
         if (this.props.form.getFieldValue(`identityDocument-${i}`) === value) {
           callback('Otro candidato tiene mismo CI')
         }
