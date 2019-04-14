@@ -8,12 +8,12 @@ require("firebase/firestore");
  * Production Credentials
  */
 var config = {
-  apiKey: "AIzaSyBE3rnjiv4nAJsDWTXgvO902M_E8ekvync",
-  authDomain: "voto-ucv.firebaseapp.com",
-  databaseURL: "https://voto-ucv.firebaseio.com",
-  projectId: "voto-ucv",
-  storageBucket: "voto-ucv.appspot.com",
-  messagingSenderId: "527855181957"
+  apiKey: "AIzaSyB9F_KjrbY0VxCXiOVPH2DockpPrSZRbgE",
+  authDomain: "admin-voto-ucv.firebaseapp.com",
+  databaseURL: "https://admin-voto-ucv.firebaseio.com",
+  projectId: "admin-voto-ucv",
+  storageBucket: "admin-voto-ucv.appspot.com",
+  messagingSenderId: "185235330067"
 };
 
 if (!firebase.apps.length) {
@@ -21,13 +21,13 @@ if (!firebase.apps.length) {
 }
 
 const storage = firebase.storage();
-const dbFirestore = firebase.firestore();
+const firestore = firebase.firestore();
 const auth = firebase.auth();
 const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
 export {
   storage,
-  dbFirestore,
+  firestore,
   auth,
   timestamp
 };
