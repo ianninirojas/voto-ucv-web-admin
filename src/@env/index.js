@@ -3,7 +3,7 @@
 // }
 
 const dev = {
-  apiUrl: 'http://localhost:3002'
+  apiUrl: 'https://a5690ff9.ngrok.io'
 }
 
 // falta agregar los tipos de ambients

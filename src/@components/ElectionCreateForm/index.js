@@ -119,8 +119,9 @@ class ElectionCreate extends Component {
         const candidates = [...this.CandidatesFormComponentRef.current.getCandidates()];
         values = { ...values, candidates }
         const dateFormat = "DD/MM/YYYY";
-        let startDatePeriod = moment(values.date[0], dateFormat).format(dateFormat);
-        let endDatePeriod = moment(values.date[1], dateFormat).format(dateFormat);
+        console.log(values);
+        let startDatePeriod = moment(values.period[0], dateFormat).format(dateFormat);
+        let endDatePeriod = moment(values.period[1], dateFormat).format(dateFormat);
         values['period'] = `${startDatePeriod} - ${endDatePeriod}`;
         electionService.create(this.state.electoralEvent.publickey, values)
           .then(response => {
@@ -201,11 +202,11 @@ class ElectionCreate extends Component {
   }
 
   facultyOptions = () => {
-    return (this.state.faculties.map(faculty => <Select.Option key={faculty.code}>{faculty.name}</Select.Option>));
+    return (this.state.faculties.map(faculty => <Select.Option key={faculty.id}>{faculty.name}</Select.Option>));
   }
 
   schoolOptions = () => {
-    return (this.state.schools.map(school => <Select.Option key={school.code}>{school.name}</Select.Option>));
+    return (this.state.schools.map(school => <Select.Option key={school.id}>{school.name}</Select.Option>));
   }
 
   // SELECT OPTIONS

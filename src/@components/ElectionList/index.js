@@ -72,6 +72,7 @@ class ElectionList extends Component {
         let elections = [];
         for (const election of response) {
           election['electoralEvent'] = this.state.electoralEvent;
+          console.log(election)
           election['key'] = election.id
           elections.push(election);
         }
@@ -81,6 +82,22 @@ class ElectionList extends Component {
         this.setState({ loading: false });
       })
   }
+
+  // getFaculties = () => {
+  //   this.setState({ loading: true });
+  //   facultyService.getAll()
+  //     .then(response => {
+  //       let faculties = [];
+  //       for (const faculty of response) {
+  //         faculty['key'] = faculty.id
+  //         faculties.push(faculty);
+  //       }
+  //       this.setState({ faculties, loading: false });
+  //     })
+  //     .catch(error => {
+  //       this.setState({ loading: false });
+  //     })
+  // }
 
   createElections = () => {
     this.props.history.push({
