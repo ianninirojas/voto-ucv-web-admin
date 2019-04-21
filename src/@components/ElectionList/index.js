@@ -72,7 +72,6 @@ class ElectionList extends Component {
         let elections = [];
         for (const election of response) {
           election['electoralEvent'] = this.state.electoralEvent;
-          console.log(election)
           election['key'] = election.id
           elections.push(election);
         }

@@ -6,6 +6,8 @@ import { Drawer, Layout } from "antd";
 
 import { MenuComponent } from "../../@components";
 
+import './style.css';
+
 const { Sider } = Layout;
 
 class Sidebar extends Component {
@@ -85,7 +87,6 @@ class Sidebar extends Component {
   RenderMenu = () => {
     const { MenuResponsive } = this;
     const { isMobile } = this.state;
-
     if (isMobile) {
       return <MenuResponsive />
     }

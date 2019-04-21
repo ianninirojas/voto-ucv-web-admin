@@ -70,11 +70,13 @@ class ElectionEdit extends Component {
       {
         title: 'Nombre',
         dataIndex: 'name',
+        key: 'name',
         align: 'center',
       },
       {
         title: 'CI',
         dataIndex: 'identityDocument',
+        key: 'identityDocument',
         align: 'center',
       }
     ];
@@ -105,16 +107,10 @@ class ElectionEdit extends Component {
 
   CandidatesList = () => {
     let candidates = [...this.state.election.candidates];
-    candidates = [
-      { name: "Jose", identityDocument: "21412421", position: "cultura", listName: 'CLUSTER' },
-      { name: "Pedro", identityDocument: "21512422", position: "presidente", listName: 'CLUSTER' },
-      { name: "Maria", identityDocument: "11303299", position: "cultura", listName: 'PC1' },
-      { name: "Juan", identityDocument: "24678456", position: "presidente", listName: 'PC1' },
-    ];
-
     let listNames = [];
 
     for (const candidate of candidates) {
+      candidate.key = candidate.identityDocument;
       if (!listNames.includes(candidate.listName))
         listNames.push(candidate.listName);
     }
@@ -129,7 +125,6 @@ class ElectionEdit extends Component {
       for (let i = 0; i < candidates.length; i++) {
         const candidate = candidates[i];
         if (candidate.listName === listName) {
-          delete candidate.listName;
           list.candidates.push(candidate);
         }
       }
@@ -140,16 +135,19 @@ class ElectionEdit extends Component {
       {
         title: 'Nombre',
         dataIndex: 'name',
+        key: 'name',
         align: 'center',
       },
       {
         title: 'CI',
         dataIndex: 'identityDocument',
+        key: 'identityDocument',
         align: 'center',
       },
       {
         title: 'Cargo',
         dataIndex: 'position',
+        key: 'position',
         align: 'center',
       }
     ];
@@ -157,6 +155,7 @@ class ElectionEdit extends Component {
     lists = lists.map(list => {
       return (
         < Table
+          key={list.listName}
           dataSource={list.candidates}
           columns={columns}
           pagination={false}

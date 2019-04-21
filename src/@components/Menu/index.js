@@ -22,6 +22,10 @@ class MenuComponent extends Component {
     };
   }
 
+  onCollapse = collapsed => {
+    this.setState({ collapsed });
+  };
+
   checkRole = (menu) => {
     const role = authenticationService.getRole();
     for (let i = 0; i < menu.length; i++) {
@@ -180,6 +184,9 @@ class MenuComponent extends Component {
         style={{
           overflow: 'auto', height: '100vh', position: 'fixed', left: 0,
         }}
+        collapsible
+        collapsed={this.state.collapsed}
+        onCollapse={this.onCollapse}
       >
         <div className="logo" >
           <Link to={pathRoutes.ELECTORALEVENTS}>

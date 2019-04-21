@@ -1,0 +1,8 @@
+.ant-layout-sider-zero-width-trigger {
+  z-index: 9999;
+  top: 0px !important;
+}
+
+.ant-layout-sider-trigger {
+  display: none;
+}
