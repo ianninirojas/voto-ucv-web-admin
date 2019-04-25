@@ -1,8 +1,4 @@
 import * as firebase from "firebase/app";
-import 'firebase/firestore';
-import 'firebase/storage';
-import 'firebase/auth';
-require("firebase/firestore");
 
 /**
  * Production Credentials
@@ -19,15 +15,3 @@ var config = {
 if (!firebase.apps.length) {
   firebase.initializeApp(config);
 }
-
-const storage = firebase.storage();
-const firestore = firebase.firestore();
-const auth = firebase.auth();
-const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-
-export {
-  storage,
-  firestore,
-  auth,
-  timestamp
-};

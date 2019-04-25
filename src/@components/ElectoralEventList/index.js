@@ -30,6 +30,27 @@ const columns = [
     align: 'center',
   },
   {
+    title: 'Activo',
+    key: 'active',
+    align: 'center',
+    render: (text, electoralEvent) => (
+      <span>
+        {console.log('electoralEvent', electoralEvent)}
+        <Icon type='check' style={{ color: electoralEvent.finished ? ('#ff0000') : (electoralEvent.active ? '#00b600' : '#000000') }} />
+      </span>
+    ),
+  },
+  {
+    title: 'Finalizado',
+    key: 'finished',
+    align: 'center',
+    render: (text, electoralEvent) => (
+      <span>
+        <Icon type='stop' style={{ color: electoralEvent.finished ? '#ff0000' : '#000000' }} />
+      </span>
+    ),
+  },
+  {
     title: 'Ver',
     key: 'see',
     align: 'center',
@@ -73,10 +94,10 @@ class ElectoralEventList extends Component {
       .then(response => {
         let electoralEvents = [];
         for (const electoralEvent of response) {
-          const publickey = nemAccountService.generatePublicKey(electoralEvent.data.name.toLowerCase());
-          electoralEvent.data['publickey'] = publickey;
-          electoralEvent.data['key'] = publickey;
-          electoralEvents.push(electoralEvent.data)
+          const publickey = nemAccountService.generatePublicKey(electoralEvent.name.toLowerCase());
+          electoralEvent['publickey'] = publickey;
+          electoralEvent['key'] = publickey;
+          electoralEvents.push(electoralEvent)
         }
         this.setState({ electoralEvents, loading: false });
       })

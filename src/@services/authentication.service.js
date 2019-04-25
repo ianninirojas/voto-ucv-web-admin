@@ -25,6 +25,7 @@ const login = (username, password) => {
 
 const refreshToken = (token) => {
     localStorage.setItem('currentUser', token);
+    currentUserSubject.next(token);
 }
 
 const logout = () => {

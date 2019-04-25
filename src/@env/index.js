@@ -1,16 +1,13 @@
-// const prod = {
-
-// }
-
-const dev = {
-  apiUrl: 'https://a5690ff9.ngrok.io'
+const prod = {
+  apiUrl: 'https://core-voto-ucv.appspot.com'
 }
 
-// falta agregar los tipos de ambients
+const dev = {  
+  apiUrl: 'http://127.0.0.1:8080'
+}
 
-const env = dev;
+const env = process.env.REACT_APP_ENV === "production" ? prod : dev;
 
 export {
   env
 }
-
