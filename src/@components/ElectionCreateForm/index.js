@@ -126,7 +126,10 @@ class ElectionCreate extends Component {
         electionService.create(this.state.electoralEvent.publickey, values)
           .then(response => {
             message.success('Elección creada');
-            this.props.history.push(pathRoutes.ELECTORALEVENTS)
+            this.props.history.push({
+              pathname: pathRoutes.ELECTIONS.replace(':electoralEventPublickey', this.state.electoralEvent.publickey),
+              state: { electoralEvent: this.state.electoralEvent }
+            })
           })
           .catch(error => {
             this.setState({ loading: false });
@@ -274,7 +277,7 @@ class ElectionCreate extends Component {
                 { required: true, message: 'Requerido' }
               ],
             })(
-              <Select placeholder="Nivel Elección" onChange={this.handleLevelElectionChange}>
+              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Nivel Elección" onChange={this.handleLevelElectionChange}>
                 {this.levelElectionOptions()}
               </Select>
             )}
@@ -293,7 +296,7 @@ class ElectionCreate extends Component {
                   { required: true, message: 'Requerido' }
                 ],
               })(
-                <Select placeholder="Tipo Elección" >
+                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Elección" >
                   {this.typesElectionOptions()}
                 </Select>
               )}
@@ -312,7 +315,7 @@ class ElectionCreate extends Component {
                 { required: true, message: 'Requerido' }
               ],
             })(
-              <Select placeholder="Tipo Elector" >
+              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Elector" >
                 {this.typesElectorOptions()}
               </Select>
             )}
@@ -331,7 +334,7 @@ class ElectionCreate extends Component {
                   { required: true, message: 'Requerido' }
                 ],
               })(
-                <Select placeholder="Facultad" onChange={this.handleFacultyChange}>
+                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Facultad" onChange={this.handleFacultyChange}>
                   {this.facultyOptions()}
                 </Select>
               )}
@@ -351,7 +354,7 @@ class ElectionCreate extends Component {
                   { required: true, message: 'Requerido' }
                 ],
               })(
-                <Select placeholder="Escuela">
+                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Escuela">
                   {this.schoolOptions()}
                 </Select>
               )}
@@ -408,7 +411,7 @@ class ElectionCreate extends Component {
                 { required: true, message: 'Requerido' }
               ],
             })(
-              <Select placeholder="Tipo Candidato" >
+              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Candidato" >
                 {this.typesCandidateOptions()}
               </Select>
             )}

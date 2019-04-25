@@ -131,7 +131,7 @@ class TypeElectionEdit extends Component {
                 { required: true, message: 'Requerido' }
               ],
             })(
-              <Select placeholder="Nivel Elección" >
+              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Nivel Elección" >
                 {this.levelElectionOptions()}
               </Select>
             )}

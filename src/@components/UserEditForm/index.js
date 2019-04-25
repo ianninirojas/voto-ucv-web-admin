@@ -154,7 +154,7 @@ class UserEdit extends Component {
                 { required: true, message: 'Requerido' }
               ],
             })(
-              <Select placeholder='Rol'>
+              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder='Rol'>
                 {this.roleOptions()}
               </Select>
             )}

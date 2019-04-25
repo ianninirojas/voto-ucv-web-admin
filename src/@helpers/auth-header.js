@@ -5,7 +5,6 @@ export function authHeader() {
     const token = authenticationService.currentUserValue;
     if (token) {
         return `Bearer ${token}`;
-        // return { Authorization: `Bearer ${token}` };
     } else {
         return {};
     }

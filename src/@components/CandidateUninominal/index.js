@@ -209,7 +209,7 @@ class CandidateUninominal extends Component {
               { required: true, message: 'Requerido' }
             ]
           })(
-            <Select>
+            <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} >
               {this.positionOptions()}
             </Select>
           )}

@@ -83,7 +83,7 @@ class Candidates extends Component {
               { required: true, message: "Requerido" }
             ]}
           >
-            <Select onChange={(value) => this.onCellChange(value, record.key, 'position')} style={{ width: '100%' }}>
+            <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} onChange={(value) => this.onCellChange(value, record.key, 'position')} style={{ width: '100%' }}>
               {this.positionOptions()}
             </Select>
           </CustomFormItem>
