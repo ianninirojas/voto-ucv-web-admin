@@ -25,6 +25,8 @@ import {
   Users,
   UserCreate,
   UserEdit,
+  Electors,
+  ElectorEdit
 } from "../@pages";
 
 import { AuthorizationRouter } from "../@components";
@@ -72,7 +74,20 @@ const routes = [
   {
     path: pathRoutes.ELECTIONSEDIT,
     component: ElectionEdit,
-    roles: [Role.Admin]
+    roles: [Role.Admin],
+    exact: true
+  },
+  {
+    path: pathRoutes.ELECTORS,
+    component: Electors,
+    roles: [Role.Admin],
+    exact: true
+  },
+  {
+    path: pathRoutes.ELECTOR,
+    component: ElectorEdit,
+    roles: [Role.Admin],
+    exact: true
   },
   {
     path: pathRoutes.FACULTIES,

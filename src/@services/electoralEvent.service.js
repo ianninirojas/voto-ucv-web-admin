@@ -36,16 +36,44 @@ const finish = (electoralEventPublickey) => {
 
 const createElectoralRegister = (electoralEventPublickey) => {
   const requestOptions = {
-    method: 'GET',
+    method: 'POST',
     headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
   };
-  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/create-electoral-register`, requestOptions).then(handleResponse);
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/electoral-register`, requestOptions).then(handleResponse);
+}
+
+const getElectoralRegister = (electoralEventPublickey) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/electoral-register`, requestOptions).then(handleResponse);
+}
+
+const getElector = (electoralEventPublickey, electorId) => {
+  const requestOptions = {
+    method: 'GET',    
+    headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/electoral-register/${electorId}`, requestOptions).then(handleResponse);
+}
+
+const updateElector = (electoralEventPublickey, electorId, data) => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/electoral-register/${electorId}`, requestOptions).then(handleResponse);
 }
 
 export const electoralEventService = {
   getAll,
   create,
-  activate,
   finish,
-  createElectoralRegister
+  activate,
+  getElector,
+  updateElector,
+  getElectoralRegister,
+  createElectoralRegister,
 }

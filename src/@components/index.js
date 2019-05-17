@@ -23,6 +23,10 @@ export * from './ElectionCreateForm';
 export * from './ElectionEditForm';
 export * from './ElectionList';
 
+// ELECTOR
+export * from './ElectorList';
+export * from './ElectorEditForm';
+
 // FACULTY
 export * from './FacultyCreateForm';
 export * from './FacultyEditForm';

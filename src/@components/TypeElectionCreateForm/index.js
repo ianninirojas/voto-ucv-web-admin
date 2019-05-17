@@ -37,7 +37,7 @@ class TypeElectionCreate extends Component {
           })
           .catch(error => {
             this.setState({ loading: false });
-            message.error('Ocurrio un error');
+            message.error('Ocurrió un error');
             this.handleError(error);
           })
       }

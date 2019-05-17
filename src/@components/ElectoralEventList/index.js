@@ -18,35 +18,27 @@ const columns = [
     align: 'center',
   },
   {
-    title: 'Fecha Inicio',
-    dataIndex: 'startDate',
-    key: 'startDate',
-    align: 'center',
-  },
-  {
-    title: 'Fecha Fin',
-    dataIndex: 'endDate',
-    key: 'endDate',
-    align: 'center',
-  },
-  {
-    title: 'Activo',
-    key: 'active',
+    title: 'Fecha',
+    key: 'date',
     align: 'center',
     render: (text, electoralEvent) => (
       <span>
-        {console.log('electoralEvent', electoralEvent)}
-        <Icon type='check' style={{ color: electoralEvent.finished ? ('#ff0000') : (electoralEvent.active ? '#00b600' : '#000000') }} />
+        {electoralEvent.startDate} - {electoralEvent.endDate}
       </span>
     ),
   },
   {
-    title: 'Finalizado',
-    key: 'finished',
+    title: 'Estatus',
+    key: 'status',
     align: 'center',
     render: (text, electoralEvent) => (
       <span>
-        <Icon type='stop' style={{ color: electoralEvent.finished ? '#ff0000' : '#000000' }} />
+        {electoralEvent.active && (
+          <Icon type='check' style={{ color: '#00b600' }} />
+        )}
+        {electoralEvent.finished && (
+          <Icon type='stop' style={{ color: '#ff0000' }} />
+        )}
       </span>
     ),
   },
@@ -57,7 +49,19 @@ const columns = [
     render: (text, electoralEvent) => (
       <span>
         <Link to={{ pathname: pathRoutes.ELECTORALEVENTSEDIT.replace(':id', electoralEvent.publickey), state: { electoralEvent } }}>
-          <Icon type="eye" />
+          <Icon type="edit" style={{ color: '#000000' }} />
+        </Link>
+      </span>
+    ),
+  },
+  {
+    title: 'Electores',
+    key: 'electores',
+    align: 'center',
+    render: (text, electoralEvent) => (
+      <span>
+        <Link to={{ pathname: pathRoutes.ELECTORS.replace(':electoralEventPublickey', electoralEvent.publickey), state: { electoralEvent } }}>
+          <Icon type="team" style={{ color: '#000000' }} />
         </Link>
       </span>
     ),
@@ -69,7 +73,7 @@ const columns = [
     render: (text, electoralEvent) => (
       <span>
         <Link to={{ pathname: pathRoutes.ELECTIONS.replace(':electoralEventPublickey', electoralEvent.publickey), state: { electoralEvent } }}>
-          <Icon type="eye" />
+          <Icon type="plus" style={{ color: '#000000' }} />
         </Link>
       </span>
     ),

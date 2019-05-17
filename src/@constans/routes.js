@@ -6,6 +6,9 @@ export const pathRoutes = {
   ELECTIONS: '/eventos-electorales/:electoralEventPublickey/elecciones',
   ELECTIONSCREATE: '/eventos-electorales/:electoralEventPublickey/elecciones/crear',
   ELECTIONSEDIT: '/eventos-electorales/:electoralEventPublickey/elecciones/editar/:id',
+  
+  ELECTORS: '/eventos-electorales/:electoralEventPublickey/electores',
+  ELECTOR: '/eventos-electorales/:electoralEventPublickey/electores/:id',
 
   FACULTIES: '/facultades',
   FACULTIESCREATE: '/facultades/crear',
