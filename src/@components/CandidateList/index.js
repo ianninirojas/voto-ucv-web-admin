@@ -298,6 +298,7 @@ class CandidateList extends Component {
 
   componentWillReceiveProps(props) {
     this.hasError(props.bHasError);
+    this.notValidCandidates(props.notValidCandidates);
   }
 
   notSameIdentityDocument = (newCandidates) => {
@@ -453,6 +454,15 @@ class CandidateList extends Component {
     this.setState({ bErrorMessage: hasError });
   }
 
+  notValidCandidates = (notValidCandidates) => {
+    if (notValidCandidates.length > 0) {
+      for (let notValidCandidate of notValidCandidates) {
+        document.getElementById(notValidCandidate.identityDocument).style.color = "#FF0000";
+      }
+      message.error('Los candidatos en rojo no estan inscritos en el registro electoral')
+    }
+  }
+
   render = () => {
     return (
       <div>
@@ -485,7 +495,7 @@ class CandidateList extends Component {
                   <Icon style={{ marginLeft: '10px' }} type="delete" />
                 </Popconfirm>
               </h1>
-              <ul>{list.candidates.map((candidate, index) => <li key={index}>{candidate.name} - {candidate.identityDocument} - {candidate.position} </li>)}</ul>
+              <ul>{list.candidates.map((candidate) => <li id={candidate.identityDocument} key={candidate.identityDocument}>{candidate.name} - {candidate.identityDocument} - {candidate.position} </li>)}</ul>
             </List.Item>
           )} />
         <Modal

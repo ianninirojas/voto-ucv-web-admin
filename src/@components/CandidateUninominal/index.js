@@ -110,6 +110,7 @@ class CandidateUninominal extends Component {
 
   componentWillReceiveProps(props) {
     this.hasError(props.bHasError);
+    this.notValidCandidates(props.notValidCandidates);
   }
 
   positionOptions = () => {
@@ -191,6 +192,22 @@ class CandidateUninominal extends Component {
     }
   }
 
+  notValidCandidates = (notValidCandidates) => {
+    var allInputs = document.getElementsByTagName("input");
+    if (notValidCandidates.length > 0) {
+      for (let notValidCandidate of notValidCandidates) {
+        var results = [];
+        for (var x = 0; x < allInputs.length; x++) {
+          if (allInputs[x].value === notValidCandidate.identityDocument)
+            allInputs[x].style.color = '#ff0000';
+          if (allInputs[x].value === notValidCandidate.name)
+            allInputs[x].style.color = '#ff0000';
+        }
+      }
+      message.error('Los candidatos en rojo no estan inscritos en el registro electoral')
+    }
+  }
+
   render() {
     const { candidates } = this.state;
     const columns = this.columns;
@@ -221,7 +238,7 @@ class CandidateUninominal extends Component {
               dataSource={candidates}
               columns={columns}
               pagination={false}
-              title={() => <h1>Candidatos </h1>}
+              title={() => <h1>Candidatos</h1>}
               bodyStyle={{ backgroundColor: 'none' }}
             />
             <Button

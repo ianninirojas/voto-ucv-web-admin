@@ -18,25 +18,15 @@ const columns = [
     align: 'center',
   },
   {
-    title: 'Fecha',
-    key: 'date',
-    align: 'center',
-    render: (text, electoralEvent) => (
-      <span>
-        {electoralEvent.startDate} - {electoralEvent.endDate}
-      </span>
-    ),
-  },
-  {
     title: 'Estatus',
     key: 'status',
     align: 'center',
     render: (text, electoralEvent) => (
       <span>
-        {electoralEvent.active && (
+        {(electoralEvent.active && !electoralEvent.finished) && (
           <Icon type='check' style={{ color: '#00b600' }} />
         )}
-        {electoralEvent.finished && (
+        {(electoralEvent.finished)&& (
           <Icon type='stop' style={{ color: '#ff0000' }} />
         )}
       </span>

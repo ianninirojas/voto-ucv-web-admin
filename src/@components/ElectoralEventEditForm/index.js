@@ -8,6 +8,7 @@ import {
   message
 } from 'antd';
 import { electoralEventService } from '../../@services/electoralEvent.service';
+import { pathRoutes } from '../../@constans';
 
 class ElectoralEventEdit extends Component {
   constructor(props) {
@@ -18,6 +19,7 @@ class ElectoralEventEdit extends Component {
       errorApi: false,
       loadingActivateElectoralEvent: false,
       loadingFinishedElectoralEvent: false,
+      loadingTotalizeElectoralEvent: false,
       loadingRegisterElectoralRegister: false
     }
   }
@@ -61,7 +63,21 @@ class ElectoralEventEdit extends Component {
       })
   }
 
+  totalize = () => {
+    this.setState({ loadingTotalizeElectoralEvent: true })
+    electoralEventService.totalize(this.state.electoralEventPublickey)
+      .then(response => {
+        message.success('Evento Electoral Totalizado');
+        this.setState({ loadingTotalizeElectoralEvent: false })
+      })
+      .catch(error => {
+        this.handleError(error);
+        this.setState({ loadingTotalizeElectoralEvent: false })
+      })
+  }
+
   handleError = (error) => {
+    console.log('error :', error);
     let errorApi = [];
     if (typeof error === 'object' && error.constructor === Array) {
       error.forEach(err => {
@@ -74,7 +90,7 @@ class ElectoralEventEdit extends Component {
       });
     }
     else {
-      errorApi.push(error.message);
+      errorApi.push(error);
     }
     this.setState({ errorApi: errorApi });
   }
@@ -86,6 +102,15 @@ class ElectoralEventEdit extends Component {
       </Form.Item>
     )
   }
+
+  // startDateCreateElection
+  // endDateCreateElection
+  // startDateCreateElectoralRegister
+  // endDateCreateElectoralRegister
+  // startDateRegisterCandidate
+  // endDateRegisterCandidate
+  // startDateActiveElectoralEvent
+  // endDateActiveElectoralEvent
 
   render() {
     const { ErrorApi } = this;
@@ -109,10 +134,49 @@ class ElectoralEventEdit extends Component {
           {/* FECHA */}
           <Form.Item
             label={(
-              <span>Fecha</span>
+              <span>Crear Elecciones</span>
             )}>
-            {getFieldDecorator('fecha', {
-              initialValue: `Inicio: ${this.state.electoralEvent.startDate} - Fin: ${this.state.electoralEvent.endDate}`
+            {getFieldDecorator('dateCreateElection', {
+              initialValue: `Inicio: ${this.state.electoralEvent.startDateCreateElection} - Fin: ${this.state.electoralEvent.endDateCreateElection}`
+            })(
+              <Input disabled={true} />
+            )}
+          </Form.Item>
+          {/* FECHA */}
+
+          {/* FECHA */}
+          <Form.Item
+            label={(
+              <span>Crear Registro Electoral</span>
+            )}>
+            {getFieldDecorator('dateCreateElectoralRegister', {
+              initialValue: `Inicio: ${this.state.electoralEvent.startDateCreateElectoralRegister} - Fin: ${this.state.electoralEvent.endDateCreateElectoralRegister}`
+            })(
+              <Input disabled={true} />
+            )}
+          </Form.Item>
+          {/* FECHA */}
+
+          {/* FECHA */}
+          <Form.Item
+            label={(
+              <span>Registrar Candidatos</span>
+            )}>
+            {getFieldDecorator('dateRegisterCandidate', {
+              initialValue: `Inicio: ${this.state.electoralEvent.startDateRegisterCandidate} - Fin: ${this.state.electoralEvent.endDateRegisterCandidate}`
+            })(
+              <Input disabled={true} />
+            )}
+          </Form.Item>
+          {/* FECHA */}
+
+          {/* FECHA */}
+          <Form.Item
+            label={(
+              <span>Activar Evento Electoral</span>
+            )}>
+            {getFieldDecorator('dateActiveElectoralEvent', {
+              initialValue: `Inicio: ${this.state.electoralEvent.startDateActiveElectoralEvent} - Fin: ${this.state.electoralEvent.endDateActiveElectoralEvent}`
             })(
               <Input disabled={true} />
             )}
@@ -124,6 +188,16 @@ class ElectoralEventEdit extends Component {
             <ErrorApi />
           )}
           {/* API ERROR */}
+
+          < Form.Item className='float-right' style={{ marginLeft: '10px' }}>
+            <Button
+              type='default'
+              loading={this.state.loadingRegisterElectoralRegister}
+              onClick={this.createElectoralRegister}
+            >
+              REGISTRO ELECTORAL
+            </Button>
+          </Form.Item>
 
           < Form.Item className='float-right' style={{ marginLeft: '10px' }}>
             <Button
@@ -145,17 +219,18 @@ class ElectoralEventEdit extends Component {
             </Button>
           </Form.Item>
 
-          < Form.Item className='float-right' style={{}}>
+          < Form.Item className='float-right' style={{ marginLeft: '10px' }}>
             <Button
-              type='default'
-              loading={this.state.loadingRegisterElectoralRegister}
-              onClick={this.createElectoralRegister}
+              type='danger'
+              loading={this.state.loadingTotalizeElectoralEvent}
+              onClick={this.totalize}
             >
-              REGISTRO ELECTORAL
+              TOTALIZAR
             </Button>
           </Form.Item>
+
         </Form>
-      </div>
+      </div >
     );
   }
 }

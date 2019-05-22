@@ -18,8 +18,18 @@ const create = (electoralEventPublickey, data) => {
   return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/election`, requestOptions).then(handleResponse);
 }
 
+const associateCandidates = (electoralEventPublickey, data) => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/election/${data.election.id}`, requestOptions).then(handleResponse);
+}
+
 export const electionService = {
   getAll,
   create,
+  associateCandidates
 }
 

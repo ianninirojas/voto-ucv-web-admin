@@ -31,7 +31,6 @@ import {
   LevelElection,
 } from '../../@constans';
 
-import { CandidateForm } from '../CandidateForm';
 
 const { RangePicker } = DatePicker;
 
@@ -56,6 +55,14 @@ class ElectionCreate extends Component {
   componentDidMount = () => {
     this.getTypesElection();
     this.getFaculties();
+  }
+
+  checkDateCreateElection = () => {
+    const dateFormat = "DD-MM-YYYY H:mm";
+    const today = moment();
+    const startDateCreateElection = moment(this.state.electoralEvent.startDateCreateElection, dateFormat);
+    const endDateCreateElection = moment(this.state.electoralEvent.endDateCreateElection, dateFormat);
+    return today.isBetween(startDateCreateElection, endDateCreateElection);
   }
 
   // GETS
@@ -111,15 +118,10 @@ class ElectionCreate extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      if (this.CandidatesFormComponentRef.current.getCandidates().length === 0) {
-        this.setState({ bHasErrorCandidates: true })
-      }
-      else if (!err) {
+      if (!err) {
         this.setState({ loading: true });
-        const candidates = [...this.CandidatesFormComponentRef.current.getCandidates()];
-        values = { ...values, candidates }
+        values = { ...values }
         const dateFormat = "DD/MM/YYYY";
-        console.log(values);
         let startDatePeriod = moment(values.period[0], dateFormat).format(dateFormat);
         let endDatePeriod = moment(values.period[1], dateFormat).format(dateFormat);
         values['period'] = `${startDatePeriod} - ${endDatePeriod}`;
@@ -225,10 +227,6 @@ class ElectionCreate extends Component {
   }
   // HANDLE CHANGE
 
-  setCandidates = () => {
-    this.setState({ bHasErrorCandidates: false })
-  }
-
   // FIELD RULES
   isNumber = (rule, value, callback) => {
     if (!isNaN(value)) {
@@ -249,205 +247,198 @@ class ElectionCreate extends Component {
     return (
       <div>
         <h1 >Evento Electoral: <span style={{ fontWeight: 400 }} >{this.state.electoralEvent.name}</span></h1>
-        <Form>
-          {/* NAME */}
-          <Form.Item
-            label={(
-              <span>Nombre</span>
-            )}
-          >
-            {getFieldDecorator('name', {
-              rules: [
-                { required: true, message: 'Requerido' }
-              ],
-            })(
-              <Input placeholder="Nombre" />
-            )}
-          </Form.Item>
-          {/* NAME */}
-
-          {/* LEVEL ELECTION */}
-          <Form.Item
-            label={(
-              <span>Nivel Elección</span>
-            )}
-          >
-            {getFieldDecorator('levelElection', {
-              rules: [
-                { required: true, message: 'Requerido' }
-              ],
-            })(
-              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Nivel Elección" onChange={this.handleLevelElectionChange}>
-                {this.levelElectionOptions()}
-              </Select>
-            )}
-          </Form.Item>
-          {/* LEVEL ELECTION */}
-
-          {/* TYPE */}
-          {this.props.form.getFieldValue('levelElection') && (
+        {this.checkDateCreateElection() ? (
+          <Form>
+            {/* NAME */}
             <Form.Item
               label={(
-                <span>Tipo Elección</span>
+                <span>Nombre</span>
               )}
             >
-              {getFieldDecorator('type', {
+              {getFieldDecorator('name', {
                 rules: [
                   { required: true, message: 'Requerido' }
                 ],
               })(
-                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Elección" >
-                  {this.typesElectionOptions()}
-                </Select>
+                <Input placeholder="Nombre" />
               )}
             </Form.Item>
-          )}
-          {/* TYPE */}
+            {/* NAME */}
 
-          {/* TYPE ELECTOR */}
-          <Form.Item
-            label={(
-              <span>Tipo Elector</span>
-            )}
-          >
-            {getFieldDecorator('typeElector', {
-              rules: [
-                { required: true, message: 'Requerido' }
-              ],
-            })(
-              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Elector" >
-                {this.typesElectorOptions()}
-              </Select>
-            )}
-          </Form.Item>
-          {/* TYPE ELECTOR */}
-
-          {/* FACULTY */}
-          {(this.props.form.getFieldValue("levelElection") === LevelElection.faculty || this.props.form.getFieldValue("levelElection") === LevelElection.school) && (
+            {/* LEVEL ELECTION */}
             <Form.Item
               label={(
-                <span>Facultad</span>
+                <span>Nivel Elección</span>
               )}
             >
-              {getFieldDecorator('facultyId', {
+              {getFieldDecorator('levelElection', {
                 rules: [
                   { required: true, message: 'Requerido' }
                 ],
               })(
-                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Facultad" onChange={this.handleFacultyChange}>
-                  {this.facultyOptions()}
+                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Nivel Elección" onChange={this.handleLevelElectionChange}>
+                  {this.levelElectionOptions()}
                 </Select>
               )}
             </Form.Item>
-          )}
-          {/* FACULTY */}
+            {/* LEVEL ELECTION */}
 
-          {/* SCHOOL */}
-          {this.props.form.getFieldValue("levelElection") === LevelElection.school && (
-            <Form.Item
-              label={(
-                <span>Escuela</span>
-              )}
-            >
-              {getFieldDecorator('schoolId', {
-                rules: [
-                  { required: true, message: 'Requerido' }
-                ],
-              })(
-                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Escuela">
-                  {this.schoolOptions()}
-                </Select>
-              )}
-            </Form.Item>
-          )}
-          {/* SCHOOL */}
-
-          {/* ALLOWED VOTES */}
-          <Form.Item
-            label={(
-              <span>Número Votos</span>
-            )}
-          >
-            {getFieldDecorator('allowedVotes', {
-              rules: [
-                { required: true, message: 'Requerido' },
-                { validator: this.isNumber, message: 'Debe ser número' }
-              ],
-            })(
-              <Input placeholder="Número Votos" />
-            )}
-          </Form.Item>
-          {/* ALLOWED VOTES */}
-
-          {/* PERIOD */}
-          <Form.Item
-            label={(
-              <span>Periodo</span>
-            )}
-          >
-            {getFieldDecorator('period', {
-              rules: [
-                { required: true, type: 'array', message: 'Requerido' },
-              ],
-            })(
-              <RangePicker
-                locale={locale}
-                disabledDate={this.disabledDate}
-                format='DD-MM-YYYY'
-                placeholder={['Comienzo', 'Fin']}
-              />
-            )}
-          </Form.Item>
-          {/* PERIOD */}
-
-          {/* TYPE CANDIDATE */}
-          <Form.Item
-            label={(
-              <span>Tipo Candidato</span>
-            )}
-          >
-            {getFieldDecorator('typeCandidate', {
-              rules: [
-                { required: true, message: 'Requerido' }
-              ],
-            })(
-              <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Candidato" >
-                {this.typesCandidateOptions()}
-              </Select>
-            )}
-          </Form.Item>
-          {/* TYPE CANDIDATE */}
-
-          {/* CANDIDATES */}
-          {this.props.form.getFieldValue('typeCandidate') !== undefined && (
-            <CandidateForm
-              bHasError={this.state.bHasErrorCandidates}
-              typeCandidate={this.props.form.getFieldValue('typeCandidate')}
-              setCandidates={this.setCandidates}
-              ref={this.CandidatesFormComponentRef}
-              {...this.props}
-            />
-          )}
-          {/* CANDIDATES */}
-
-          {/* API ERROR */}
-          {this.state.errorApi.length > 0 && (
-            <ErrorApi />
-          )}
-          {/* API ERROR */}
-
-          < Form.Item className='float-right' >
-            <Popconfirm title="Esta información no puede ser modificada" onConfirm={this.handleSubmit}>
-              <Button
-                type='primary'
-                loading={this.state.loading}
+            {/* TYPE */}
+            {this.props.form.getFieldValue('levelElection') && (
+              <Form.Item
+                label={(
+                  <span>Tipo Elección</span>
+                )}
               >
-                CREAR
-            </Button>
-            </Popconfirm>
-          </Form.Item>
+                {getFieldDecorator('type', {
+                  rules: [
+                    { required: true, message: 'Requerido' }
+                  ],
+                })(
+                  <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Elección" >
+                    {this.typesElectionOptions()}
+                  </Select>
+                )}
+              </Form.Item>
+            )}
+            {/* TYPE */}
 
-        </Form>
+            {/* TYPE ELECTOR */}
+            <Form.Item
+              label={(
+                <span>Tipo Elector</span>
+              )}
+            >
+              {getFieldDecorator('typeElector', {
+                rules: [
+                  { required: true, message: 'Requerido' }
+                ],
+              })(
+                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Elector" >
+                  {this.typesElectorOptions()}
+                </Select>
+              )}
+            </Form.Item>
+            {/* TYPE ELECTOR */}
+
+            {/* FACULTY */}
+            {(this.props.form.getFieldValue("levelElection") === LevelElection.faculty || this.props.form.getFieldValue("levelElection") === LevelElection.school) && (
+              <Form.Item
+                label={(
+                  <span>Facultad</span>
+                )}
+              >
+                {getFieldDecorator('facultyId', {
+                  rules: [
+                    { required: true, message: 'Requerido' }
+                  ],
+                })(
+                  <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Facultad" onChange={this.handleFacultyChange}>
+                    {this.facultyOptions()}
+                  </Select>
+                )}
+              </Form.Item>
+            )}
+            {/* FACULTY */}
+
+            {/* SCHOOL */}
+            {this.props.form.getFieldValue("levelElection") === LevelElection.school && (
+              <Form.Item
+                label={(
+                  <span>Escuela</span>
+                )}
+              >
+                {getFieldDecorator('schoolId', {
+                  rules: [
+                    { required: true, message: 'Requerido' }
+                  ],
+                })(
+                  <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Escuela">
+                    {this.schoolOptions()}
+                  </Select>
+                )}
+              </Form.Item>
+            )}
+            {/* SCHOOL */}
+
+            {/* ALLOWED VOTES */}
+            <Form.Item
+              label={(
+                <span>Número Votos</span>
+              )}
+            >
+              {getFieldDecorator('allowedVotes', {
+                rules: [
+                  { required: true, message: 'Requerido' },
+                  { validator: this.isNumber, message: 'Debe ser número' }
+                ],
+              })(
+                <Input placeholder="Número Votos" />
+              )}
+            </Form.Item>
+            {/* ALLOWED VOTES */}
+
+            {/* PERIOD */}
+            <Form.Item
+              label={(
+                <span>Periodo</span>
+              )}
+            >
+              {getFieldDecorator('period', {
+                rules: [
+                  { required: true, type: 'array', message: 'Requerido' },
+                ],
+              })(
+                <RangePicker
+                  locale={locale}
+                  disabledDate={this.disabledDate}
+                  format='DD-MM-YYYY'
+                  placeholder={['Comienzo', 'Fin']}
+                />
+              )}
+            </Form.Item>
+            {/* PERIOD */}
+
+            {/* TYPE CANDIDATE */}
+            <Form.Item
+              label={(
+                <span>Tipo Candidato</span>
+              )}
+            >
+              {getFieldDecorator('typeCandidate', {
+                rules: [
+                  { required: true, message: 'Requerido' }
+                ],
+              })(
+                <Select showSearch optionFilterProp="children" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} placeholder="Tipo Candidato" >
+                  {this.typesCandidateOptions()}
+                </Select>
+              )}
+            </Form.Item>
+            {/* TYPE CANDIDATE */}
+
+            {/* API ERROR */}
+            {this.state.errorApi.length > 0 && (
+              <ErrorApi />
+            )}
+            {/* API ERROR */}
+
+            < Form.Item className='float-right' >
+              <Popconfirm title="Esta información no puede ser modificada" onConfirm={this.handleSubmit}>
+                <Button
+                  type='primary'
+                  loading={this.state.loading}
+                >
+                  CREAR
+              </Button>
+              </Popconfirm>
+            </Form.Item>
+
+          </Form>
+
+        ) : (
+            <h1>No es periodo para crear elecciones</h1>
+          )}
       </div >
     );
   }

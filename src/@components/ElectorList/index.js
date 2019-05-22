@@ -13,6 +13,7 @@ import {
   Button,
   Select,
   Divider,
+  Spin,
 } from 'antd';
 
 import {
@@ -58,12 +59,12 @@ class ElectorList extends Component {
     );
 
   componentDidMount = async () => {
-    await this.getFaculties();
-    await this.getElectoralRegister();
+    await Promise.all([this.getFaculties(), this.getElectoralRegister()])
     this.groupElectors();
   }
 
   getFaculties = () => {
+    this.setState({ loading: true });
     return new Promise((resolve, reject) => {
       facultyService.getAll()
         .then(async response => {
@@ -72,9 +73,10 @@ class ElectorList extends Component {
             faculty['key'] = faculty.id
             faculty['schools'] = await schoolService.getAll(faculty.id);
             faculty['schools'] = faculty['schools'].map(school => { school['key'] = `${faculty['key']}.${school.id}`; return school; })
+            console.log('faculty', faculty)
             faculties.push(faculty);
           }
-          resolve(this.setState({ faculties }))
+          resolve(this.setState({ faculties, loading: false }))
         })
         .catch(error => {
           console.log('error', error)
@@ -83,15 +85,17 @@ class ElectorList extends Component {
   }
 
   getElectoralRegister = () => {
+    this.setState({ loading: true });
     return new Promise((resolve, reject) => {
       electoralEventService.getElectoralRegister(this.state.electoralEvent.publickey)
         .then(response => {
           response = response.map(elector => {
-            elector['elector'] = `V-${elector.ci} ${elector.apellido1} ${elector.inicialApellido2} ${elector.nombre1} ${elector.inicialNombre2}`;
-            elector['key'] = elector.ci;
+            elector['elector'] = `V-${elector.identityDocument} ${elector.apellido1} ${elector.inicialApellido2} ${elector.nombre1} ${elector.inicialNombre2}`;
+            elector['key'] = elector.identityDocument;
             return elector
           })
-          resolve(this.setState({ electors: response }))
+          console.log('response', response)
+          resolve(this.setState({ electors: response, loading: false }))
         })
         .catch(error =>
           console.log('error', error)
@@ -101,6 +105,7 @@ class ElectorList extends Component {
 
   groupElectors = () => {
     let groupElectors;
+    this.setState({ loading: true });
     const groupByType = this.groupBy('type');
     const groupByFaculty = this.groupBy('facultyId');
     const groupBySchool = this.groupBy('schoolId');
@@ -111,14 +116,14 @@ class ElectorList extends Component {
         groupElectors[type][faculty] = groupBySchool(groupElectors[type][faculty])
       }
     }
-    this.setState({ groupElectors })
+    this.setState({ groupElectors, loading: false })
   }
 
   handleOnRow = (elector, rowIndex) => {
     return {
       onClick: event => {
         this.props.history.push({
-          pathname: pathRoutes.ELECTOR.replace(':electoralEventPublickey', this.state.electoralEvent.publickey).replace(':id', elector.ci),
+          pathname: pathRoutes.ELECTOR.replace(':electoralEventPublickey', this.state.electoralEvent.publickey).replace(':id', elector.identityDocument),
         })
       }
     }
@@ -127,7 +132,6 @@ class ElectorList extends Component {
   RenderGroupElectors = () => {
     const groupElectors = { ...this.state.groupElectors };
     let render = [];
-
     for (const type in groupElectors) {
       if (this.state.typeElectorSelected !== 'all')
         if (this.state.typeElectorSelected !== type)
@@ -165,8 +169,9 @@ class ElectorList extends Component {
               continue
 
           const electors = schools[schoolId];
+          console.log('schoolId', schoolId)
           const school = faculty.schools.find(school => parseInt(school.id) === parseInt(schoolId));
-
+          console.log('school', school)
           render.push(
             <span style={{ textTransform: 'uppercase', textAlign: 'center', fontWeight: '500', fontSize: '12px', color: '#000000' }}>
               Escuela de {school.name}
@@ -175,6 +180,7 @@ class ElectorList extends Component {
 
           render.push(
             <Table
+              style={{ paddingBottom: '20px' }}
               size='default'
               bordered={true}
               key={`${type}.${facultyId}.${schoolId}`}
@@ -281,79 +287,89 @@ class ElectorList extends Component {
   render() {
     const { RenderGroupElectors } = this;
     return (
+
       <div style={{ paddingBottom: '40px' }}>
-        <Form.Item style={{ marginBottom: '0px' }}>
-          <h1 >Evento Electoral: <span style={{ fontWeight: 400 }} >{this.state.electoralEvent.name}</span></h1>
-        </Form.Item>
-        <Row gutter={10}>
-          {/* TYPE ELECTOR */}
-          <Col
-            xs={24}
-            sm={24}
-            md={8}
-            lg={8}
-            xl={8}
-          >
-            <Form.Item
-              label={(
-                <span>Tipo Elector</span>
-              )}
-            >
-              <Select style={{ width: '100%' }} value={this.state.typeElectorSelected} onChange={this.handleChangeTypeElector} >
-                <Select.Option key='all'>Todos</Select.Option>
-                <Select.Option key='estudiante'>Estudiante</Select.Option>
-                <Select.Option key='egresado'>Egresado</Select.Option>
-                <Select.Option key='profesor'>Profesor</Select.Option>
-              </Select>
+        {this.state.loading && (
+          <div style={{ textAlign: 'center' }}>
+            <Spin />
+          </div>
+        )}
+        {!this.state.loading && (
+          <div>
+            <Form.Item style={{ marginBottom: '0px' }}>
+              <h1 >Evento Electoral: <span style={{ fontWeight: 400 }} >{this.state.electoralEvent.name}</span></h1>
             </Form.Item>
-          </Col>
-          {/* TYPE ELECTOR */}
-
-          {/* FACULTY */}
-          <Col
-            xs={24}
-            sm={24}
-            md={8}
-            lg={8}
-            xl={8}
-          >
-            <Form.Item
-              label={(
-                <span>Facultad</span>
-              )}
-            >
-              <Select style={{ width: '100%' }} value={this.state.facultySelected} onChange={this.handleChangeFaculty}>
-                <Select.Option key='all'>Todas</Select.Option>
-                {this.renderFacultiesOptions()}
-              </Select>
-            </Form.Item>
-          </Col>
-          {/* FACULTY */}
-
-          {/* SCHOOL */}
-          {this.state.facultySelected !== 'all' && (
-            <Col
-              xs={24}
-              sm={24}
-              md={8}
-              lg={8}
-              xl={8}
-            >
-              <Form.Item
-                label={(
-                  <span>Escuela</span>
-                )}
+            <Row gutter={10}>
+              {/* TYPE ELECTOR */}
+              <Col
+                xs={24}
+                sm={24}
+                md={8}
+                lg={8}
+                xl={8}
               >
-                <Select style={{ width: '100%' }} value={this.state.schoolSelected} onChange={this.handleChangeSchool}>
-                  <Select.Option key='all'>Todas</Select.Option>
-                  {this.renderSchoolsOptions()}
-                </Select>
-              </Form.Item>
-            </Col>
-          )}
-          {/* SCHOOL */}
-        </Row>
-        <RenderGroupElectors />
+                <Form.Item
+                  label={(
+                    <span>Tipo Elector</span>
+                  )}
+                >
+                  <Select style={{ width: '100%' }} value={this.state.typeElectorSelected} onChange={this.handleChangeTypeElector} >
+                    <Select.Option key='all'>Todos</Select.Option>
+                    <Select.Option key='estudiante'>Estudiante</Select.Option>
+                    <Select.Option key='egresado'>Egresado</Select.Option>
+                    <Select.Option key='profesor'>Profesor</Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              {/* TYPE ELECTOR */}
+
+              {/* FACULTY */}
+              <Col
+                xs={24}
+                sm={24}
+                md={8}
+                lg={8}
+                xl={8}
+              >
+                <Form.Item
+                  label={(
+                    <span>Facultad</span>
+                  )}
+                >
+                  <Select style={{ width: '100%' }} value={this.state.facultySelected} onChange={this.handleChangeFaculty}>
+                    <Select.Option key='all'>Todas</Select.Option>
+                    {this.renderFacultiesOptions()}
+                  </Select>
+                </Form.Item>
+              </Col>
+              {/* FACULTY */}
+
+              {/* SCHOOL */}
+              {this.state.facultySelected !== 'all' && (
+                <Col
+                  xs={24}
+                  sm={24}
+                  md={8}
+                  lg={8}
+                  xl={8}
+                >
+                  <Form.Item
+                    label={(
+                      <span>Escuela</span>
+                    )}
+                  >
+                    <Select style={{ width: '100%' }} value={this.state.schoolSelected} onChange={this.handleChangeSchool}>
+                      <Select.Option key='all'>Todas</Select.Option>
+                      {this.renderSchoolsOptions()}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              )}
+              {/* SCHOOL */}
+            </Row>
+            <RenderGroupElectors />
+          </div>
+        )}
       </div >
     );
   }

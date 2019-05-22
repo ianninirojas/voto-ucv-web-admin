@@ -3,16 +3,23 @@ import React, { Component } from 'react';
 import {
   Form,
   Input,
-  Table
+  Table,
+  Button,
+  message,
+  Alert
 } from "antd";
 
+import moment from 'moment';
+
+import { CandidateForm } from "../../@components";
+
 import {
+  schoolService,
   facultyService,
-  schoolService
+  electionService
 } from '../../@services';
 
-import { TypeCandidate } from '../../@constans';
-
+import { TypeCandidate, pathRoutes } from '../../@constans';
 
 class ElectionEdit extends Component {
 
@@ -20,12 +27,92 @@ class ElectionEdit extends Component {
     super(props);
     this.state = {
       election: this.props.location.state.election,
+      electoralEvent: this.props.location.state.electoralEvent,
+      loadingRegisterCandidates: false,
+      bHasErrorCandidates: false,
+      candidates: [],
+      notValidCandidates: []
     }
     this.CandidatesFormComponentRef = React.createRef();
+    console.log('this.state.election :', this.state.election);
   }
 
   componentDidMount = () => {
     this.getFaculties();
+  }
+
+  checkDateRegisterCandidates = () => {
+    const dateFormat = "DD-MM-YYYY H:mm";
+    const today = moment();
+
+    const startDateRegisterCandidate = moment(this.state.electoralEvent.startDateRegisterCandidate, dateFormat);
+    const endDateRegisterCandidate = moment(this.state.electoralEvent.endDateRegisterCandidate, dateFormat);
+    return today.isBetween(startDateRegisterCandidate, endDateRegisterCandidate);
+  }
+
+  hasCandidates = () => {
+    return this.state.election.candidates.length > 0;
+  }
+
+  setCandidates = () => {
+    this.setState({ bHasErrorCandidates: false })
+  }
+
+  associateCandidates = () => {
+    if (this.CandidatesFormComponentRef.current.getCandidates().length === 0) {
+      this.setState({ bHasErrorCandidates: true })
+    }
+    else {
+      this.setState({ loadingRegisterCandidates: true });
+      const candidates = [...this.CandidatesFormComponentRef.current.getCandidates()];
+      const values = { election: this.state.election, candidates }
+      electionService.associateCandidates(this.state.electoralEvent.publickey, values)
+        .then(response => {
+          message.success('Candidatos Registrados');
+          this.props.history.push({
+            pathname: pathRoutes.ELECTIONS.replace(':electoralEventPublickey', this.state.electoralEvent.publickey),
+            state: { electoralEvent: this.state.electoralEvent }
+          })
+        })
+        .catch(error => {
+          this.setState({ loadingRegisterCandidates: false });
+          if (error.code === '00') {
+            this.notValidCandidates(error.notValidCandidates);
+          }
+          else { message.error('Ocurrió un error'); this.handleError(error); }
+        })
+    }
+  }
+
+  notValidCandidates = (notValidCandidates) => {
+    this.setState({ notValidCandidates });
+    this.setState({ notValidCandidates: [] });
+  }
+
+  handleError = (error) => {
+    let errorApi = [];
+    if (typeof error === 'object' && error.constructor === Array) {
+      error.forEach(err => {
+        for (const key in err) {
+          if (err.hasOwnProperty(key)) {
+            const element = err[key];
+            errorApi.push(element);
+          }
+        }
+      });
+    }
+    else {
+      errorApi.push(error.message);
+    }
+    this.setState({ errorApi: errorApi });
+  }
+
+  ErrorApi = () => {
+    return (
+      <Form.Item>
+        {this.state.errorApi.map((error, index) => <Alert message={error} type='error' key={index} />)}
+      </Form.Item>
+    )
   }
 
   // GETS
@@ -179,7 +266,7 @@ class ElectionEdit extends Component {
 
   Candidates = () => {
     const typeCandidate = this.state.election.typeCandidate;
-    const { CandidatesUninominal, CandidatesList } = this;
+    const { CandidatesUninominal, CandidatesList, ErrorApi } = this;
     let render;
     if (typeCandidate === TypeCandidate.uninominal) {
       render = <CandidatesUninominal />
@@ -325,8 +412,37 @@ class ElectionEdit extends Component {
           {/* TYPE CANDIDATE */}
 
           {/* CANDIDATES */}
-          <Candidates />
+          {(!this.checkDateRegisterCandidates() && !this.hasCandidates()) ? (
+            <div>
+              <CandidateForm
+                bHasError={this.state.bHasErrorCandidates}
+                typeCandidate={this.props.form.getFieldValue('typeCandidate')}
+                setCandidates={this.setCandidates}
+                notValidCandidates={this.state.notValidCandidates}
+                ref={this.CandidatesFormComponentRef}
+                {...this.props}
+              />
+              < Form.Item className='float-right' style={{}}>
+                <Button
+                  type='default'
+                  loading={this.state.loadingRegisterCandidates}
+                  onClick={this.associateCandidates}
+                >
+                  REGISTRAR CANDIDATOS
+              </Button>
+              </Form.Item>
+            </div>
+          ) : (
+              <Candidates />
+            )}
           {/* CANDIDATES */}
+
+          {/* API ERROR */}
+          {/* {this.state.errorApi.length > 0 && (
+            <ErrorApi />
+          )} */}
+          {/* API ERROR */}
+
         </Form>
       </div >
     );

@@ -42,6 +42,14 @@ const createElectoralRegister = (electoralEventPublickey) => {
   return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/electoral-register`, requestOptions).then(handleResponse);
 }
 
+const totalize = (electoralEventPublickey) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { Authorization: authHeader(), 'Content-Type': 'application/json' },
+  };
+  return fetch(`${env.apiUrl}/electoral-event/${electoralEventPublickey}/totalize`, requestOptions).then(handleResponse);
+}
+
 const getElectoralRegister = (electoralEventPublickey) => {
   const requestOptions = {
     method: 'GET',
@@ -72,6 +80,7 @@ export const electoralEventService = {
   create,
   finish,
   activate,
+  totalize,
   getElector,
   updateElector,
   getElectoralRegister,
